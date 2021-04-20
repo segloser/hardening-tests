@@ -1,13 +1,16 @@
 #!/bin/bash
 ## Basic dirty non-sanitized Wazuh Agent Installation Script
-## and Hardening automation through Ansible
-## This script is conceived to be run in a Cubic Virtual Environment once, to prepare a 
-## OS hardened bootable template to work with Wazuh.
+## and Hardening automation through Ansible.
+## This script is conceived to be run once, to prepare a 
+## OS hardened template to work with Wazuh 
+## in a very specific environment (Cubic), that conditions restrictions.
 
 ## Legend
 ## [i] - Informational text
 ## [r] - Action requested / User input needed
 ## [w] - Warning!
+
+LOG="/tmp/wazuh-install.log"
 
 clear
 # Run me as sudo 
@@ -113,6 +116,7 @@ then
 else
 	echo "[i] - Wazuh-agent seems to be already installed... Continuing the process..."
 	echo
+	echo "WAZUHINSTALLED" >> $LOG
 fi
 sleep 2
 
@@ -142,19 +146,28 @@ else
 fi
 
 #
-echo
-echo "[i] - We need to download the CIS Benchmark Ubuntu 18.04 L1"
-echo "[i] - This file should be provided by a remote or local security server"
-echo "[r] - Press ENTER to download the cis_ubuntu18-04_L1.yml file from its default location or add a new URL now): "
-read CISURL
-cd /var/ossec/ruleset/sca
+function cis_download(){
+	echo
+	echo "[i] - We need to download the CIS Benchmark Ubuntu 18.04 L1"
+	echo "[i] - This file should be provided by a remote or local security server"
+	echo "[r] - Press ENTER to download the cis_ubuntu18-04_L1.yml file from its default location or add a new URL now): "
+	read CISURL
+	cd /var/ossec/ruleset/sca
 
-if [[ $CISURL == "" ]]
-then
-	CISURL="https://raw.githubusercontent.com/segloser/hardening-tests/main/cis_ubuntu18-04_L1.yml"
+	if [[ $CISURL == "" ]]
+	then
+		CISURL="https://raw.githubusercontent.com/segloser/hardening-tests/main/cis_ubuntu18-04_L1.yml"
+	fi
+	wget $CISURL 
+	chgrp ossec /var/ossec/ruleset/sca/cis_ubuntu18-04_L1.yml
+	echo 'CISDOWNLOADED' >> $LOG
+}
+
+if [[ grep -Eo "CISDOWNLOADED" $LOG == "" ]]
+then 
+	cis_download
+	rm /var/ossec/ruleset/sca/debian*.yml
 fi
-wget $CISURL 
-chgrp ossec /var/ossec/ruleset/sca/cis_ubuntu18-04_L1.yml
 
 # Installing SSH to implement a secure configuration.
 # It will be uninstalled.
@@ -206,11 +219,18 @@ function ansi_install(){
 
 ansi_install 
 
-echo
-echo "[i] - Installing git"
-sudo apt install git -y
+if [[ grep -Eo "GITINSTALLED" $LOG == "" ]]
+then 
+	echo
+	echo "[i] - Installing git"
+	sudo apt install git -y
+	echo "GITINSTALLED" >> $LOG
+fi
 
-git clone https://github.com/florianutz/Ubuntu1804-CIS /opt/Ubuntu1804-CIS
+if [!-d "/opt/Ubuntu1804-CIS"]
+then
+	git clone https://github.com/florianutz/Ubuntu1804-CIS /opt/Ubuntu1804-CIS
+fi
 
 cd /opt/Ubuntu1804-CIS
 
@@ -243,34 +263,36 @@ echo "    - Ubuntu1804-CIS" >> /opt/Ubuntu1804-CIS/my_console.yml
 
 sed -i 's/- name: generate new grub config\n  become: true\n  command: grub-mkconfig -o "{{ grub_cfg.stat.path }}"\n  notify: fix permissions after generate new grub config handler\n/- name: generate new grub config\n  become: true\n  command: grub-mkconfig -o "{{ grub_cfg.stat.path }}"\n  notify: fix permissions after generate new grub config handler\n  tags: grub_config\n/g'  /opt/Ubuntu1804-CIS/roles/Ubuntu1804-CIS/handlers/main.yml
 
-echo '#!/user/bin/python' > /tmp/replace.py
-echo 'import re' >> /tmp/replace.py
-echo '' >> /tmp/replace.py
-echo 'filename = "/opt/Ubuntu1804-CIS/roles/Ubuntu1804-CIS/handlers/main.yml"' >> /tmp/replace.py
-echo '' >> /tmp/replace.py
-echo 'search_text = """' >> /tmp/replace.py
-echo '- name: generate new grub config' >> /tmp/replace.py
-echo '  become: true' >> /tmp/replace.py
-echo '  command: grub-mkconfig -o "{{ grub_cfg.stat.path }}"' >> /tmp/replace.py
-echo '  notify: fix permissions after generate new grub config handler' >> /tmp/replace.py
-echo '"""' >> /tmp/replace.py
-echo '' >> /tmp/replace.py
-echo 'replace_text = """' >> /tmp/replace.py
-echo '- name: generate new grub config' >> /tmp/replace.py
-echo '  become: true' >> /tmp/replace.py
-echo '  command: grub-mkconfig -o "{{ grub_cfg.stat.path }}"' >> /tmp/replace.py
-echo '  notify: fix permissions after generate new grub config handler' >> /tmp/replace.py
-echo '  tags: grub_config' >> /tmp/replace.py
-echo '"""' >> /tmp/replace.py
-echo '' >> /tmp/replace.py
-echo 'with open(filename, "r+") as f:' >> /tmp/replace.py
-echo '    text = f.read()' >> /tmp/replace.py
-echo '    text = re.sub(search_text, replace_text, text)' >> /tmp/replace.py
-echo '    f.seek(0)' >> /tmp/replace.py
-echo '    f.write(text)' >> /tmp/replace.py
-echo '    f.truncate()' >> /tmp/replace.py
-
-python /tmp/replace.py
+function add_tag(){
+	echo '#!/user/bin/python' > /tmp/replace.py
+	echo 'import re' >> /tmp/replace.py
+	echo '' >> /tmp/replace.py
+	echo 'filename = "/opt/Ubuntu1804-CIS/roles/Ubuntu1804-CIS/handlers/main.yml"' >> /tmp/replace.py
+	echo '' >> /tmp/replace.py
+	echo 'search_text = """' >> /tmp/replace.py
+	echo '- name: generate new grub config' >> /tmp/replace.py
+	echo '  become: true' >> /tmp/replace.py
+	echo '  command: grub-mkconfig -o "{{ grub_cfg.stat.path }}"' >> /tmp/replace.py
+	echo '  notify: fix permissions after generate new grub config handler' >> /tmp/replace.py
+	echo '"""' >> /tmp/replace.py
+	echo '' >> /tmp/replace.py
+	echo 'replace_text = """' >> /tmp/replace.py
+	echo '- name: generate new grub config' >> /tmp/replace.py
+	echo '  become: true' >> /tmp/replace.py
+	echo '  command: grub-mkconfig -o "{{ grub_cfg.stat.path }}"' >> /tmp/replace.py
+	echo '  notify: fix permissions after generate new grub config handler' >> /tmp/replace.py
+	echo '  tags: grub_config' >> /tmp/replace.py
+	echo '"""' >> /tmp/replace.py
+	echo '' >> /tmp/replace.py
+	echo 'with open(filename, "r+") as f:' >> /tmp/replace.py
+	echo '    text = f.read()' >> /tmp/replace.py
+	echo '    text = re.sub(search_text, replace_text, text)' >> /tmp/replace.py
+	echo '    f.seek(0)' >> /tmp/replace.py
+	echo '    f.write(text)' >> /tmp/replace.py
+	echo '    f.truncate()' >> /tmp/replace.py
+	python /tmp/replace.py
+}
+add_tag
 
 # Installing auditd to implement a secure configuration
 sudo apt install -y auditd
