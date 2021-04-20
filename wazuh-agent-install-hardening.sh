@@ -1,8 +1,8 @@
 #!/bin/bash
 ## Basic dirty non-sanitized Wazuh Agent Installation Script
 ## and Hardening automation through Ansible
-## This script is conceived to be run once, to prepare a 
-## OS hardened template to work with Wazuh.
+## This script is conceived to be run in a Cubic Virtual Environment once, to prepare a 
+## OS hardened bootable template to work with Wazuh.
 
 ## Legend
 ## [i] - Informational text
