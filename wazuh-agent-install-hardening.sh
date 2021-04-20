@@ -227,7 +227,7 @@ then
 	echo "GITINSTALLED" >> $LOG
 fi
 
-if [!-d "/opt/Ubuntu1804-CIS"]
+if [ ! -d "/opt/Ubuntu1804-CIS" ]
 then
 	git clone https://github.com/florianutz/Ubuntu1804-CIS /opt/Ubuntu1804-CIS
 fi
