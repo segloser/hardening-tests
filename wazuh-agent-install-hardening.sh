@@ -163,7 +163,7 @@ function cis_download(){
 	echo 'CISDOWNLOADED' >> $LOG
 }
 
-if [[ grep -Eo "CISDOWNLOADED" $LOG == "" ]]
+if [[ $(grep -Eo "CISDOWNLOADED" $LOG) == "" ]]
 then 
 	cis_download
 	rm /var/ossec/ruleset/sca/debian*.yml
@@ -219,7 +219,7 @@ function ansi_install(){
 
 ansi_install 
 
-if [[ grep -Eo "GITINSTALLED" $LOG == "" ]]
+if [[ $(grep -Eo "GITINSTALLED" $LOG) == "" ]]
 then 
 	echo
 	echo "[i] - Installing git"
