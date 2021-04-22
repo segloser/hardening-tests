@@ -445,7 +445,7 @@ ansible_remove
 
 function removing_misc(){
 
-	sudo apt remove ssh -y
+	#sudo apt remove ssh -y
 
 	# Clean the ruleset/sca directory and restart Wazuh
 	[ -d /var/ossec/ruleset/sca/DISABLED  ] || mkdir /var/ossec/ruleset/sca/DISABLED
