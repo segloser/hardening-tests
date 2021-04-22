@@ -7,8 +7,8 @@ The script uses the proper SCA Template for providing statistics and details abo
 The two only versions tested are: Ubuntu 18.04 and 20.04.
 
 <li>Must be run as root</li>
-<li>Change the Wazuh Manager Default IP when required or manually later on</li>
-<li>AIDE installation is disabled by default, since Wazuh offers integrity check by default</li>  
+<li>Change the Wazuh Manager Default IP when required, manually later on or directly in the script before launching it.</li>
+<li>AIDE installation is disabled by default, since Wazuh offers integrity check by default.</li>  
 <li>Many network and partitioning configuration settings are not implemented. Add it yourself according to your environment needs.</li>
 
 It is for a very specific environment, so this script will not be useful for general purposes.
