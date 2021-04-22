@@ -16,3 +16,6 @@ It is for a very specific environment, so this script will not be useful for gen
 The script downloads from other repositories (Main source: <a href="https://github.com/florianutz/Ubuntu1804-CIS">florianutz</a>) and the current directory all it needs. No breakpoints are enabled, so if you want to have a more granular control of the actions or functions, uncomment the breakpoints (well marked).
 
 You can disable certain rules during the test to speed up the process.
+
+# WARNING
+Do not run this script in a production environment. 
