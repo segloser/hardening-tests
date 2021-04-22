@@ -179,7 +179,7 @@ then
 	echo
 	echo "Wazuh Manager Default IP = 100.100.100.100"
 	echo 
-	echo -e "[r] - You have 10 seconds to write a custom IP, or a default value will be used insted \nWazuh Manager IP: "
+	echo -e "[r] - You have 10 seconds to write a custom IP, or a default value will be used instead \nWazuh Manager IP: "
 	read -t 10 IP
 	if [[ $IP == "" ]]
 	then
