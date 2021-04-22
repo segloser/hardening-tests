@@ -11,8 +11,9 @@
 ## [w] - Warning!
 
 LOG="/tmp/wazuh-install.log"
-echo $(date) >> $LOG
-echo "============================="
+echo -n "\n============================="
+echo -n "$(date)" >> $LOG
+echo -n "=============================" >> $LOG
 
 VERSIONCHECK=$(cat /etc/os-release  | grep VERSION_ID | grep -Eo "[0-9]{2}.[0-9]{2}")
 function check_ubuntu_version(){
@@ -219,7 +220,7 @@ clear
 echo 
 echo "************************************************************************"
 echo "* Ready to install Ansible. This includes installing Python 2.7        *"
-echo "* in case of Ubuntu $VERSION.04                                        *"
+echo "* in case of Ubuntu 18.04                                        *"
 echo "*                                                                      *"  
 echo "* Remember to unsinstall Python 2.7 when you finish with Ansible + CIS *"
 echo "************************************************************************"
@@ -356,7 +357,7 @@ clear
 
 # Skipping some rules and actions 
 read -p "[r] - Press ENTER when ready to play the book with Ansible"
-ansible-playbook /opt/Ubuntu1804-CIS/my_console.yml --skip-tags "aide, grub_config"
+ansible-playbook /opt/Ubuntu1804-CIS/my_console.yml --skip-tags "aide, grub_config, rule_2.2.1.1, rule_2.2.3"
 
 function ansible_remove(){
 	
