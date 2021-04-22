@@ -61,7 +61,10 @@ function update_disabling(){
 	sudo rm /var/cache/apt/archives/lock
 	sudo rm /var/lib/dpkg/lock
 	sudo rm /var/lib/dpkg/lock-frontend
-	read -p "Lock files removed - Press ENTER to start"
+	##########################
+	### CONTROL BREAKPOINT ###
+	##########################
+	###read -p "Lock files removed - Press ENTER to start"
 }
 update_disabling
 
@@ -164,15 +167,24 @@ then
 	clear
 	echo "[i] - The Wazuh agent is NOT sending information to the Wazuh Manager"
 	echo "[i] - You will need to find out your Wazuh Manager IP for the next step"
-	read -p "Press ENTER when ready to continue."
+	##########################
+	### CONTROL BREAKPOINT ###
+	##########################
+	###read -p "Press ENTER when ready to continue."
 	echo
 	echo
 	echo "********************************"
 	echo "* Setting the Wazuh Manager IP *"
 	echo "********************************"
 	echo
-	echo "[r] - Type the IP of the Wazuh Manager: "
-	read IP
+	echo "Wazuh Manager Default IP = 100.100.100.100"
+	echo 
+	echo -n "[r] - You have 10 seconds to write a custom IP, or a default value will be used insted \n Wazuh Manager IP: "
+	read -t 10 IP
+	if [[ $IP == "" ]]
+	then
+		IP="100.100.100.100"
+	fi
 	sed -i "s/      <address>MANAGER_IP<\/address>/     <address>$IP<\/address>/g" /var/ossec/etc/ossec.conf
 
 	echo
@@ -188,8 +200,11 @@ function cis_download(){
 	echo
 	echo "[i] - We need to download the CIS SCA Benchmark for Ubuntu $VERSION.04 L1"
 	echo "[i] - This file should be provided by a remote or local security server"
+	##########################
+	### CONTROL BREAKPOINT ###
+	##########################
 	echo "[r] - Press ENTER to download the cis_ubuntu$VERSION-04_L1.yml file from its default location or add a new URL now): "
-	read CISURL
+	read -t 0 CISURL
 	cd /var/ossec/ruleset/sca
 
 	if [[ $CISURL == "" ]]
@@ -220,11 +235,15 @@ clear
 echo 
 echo "************************************************************************"
 echo "* Ready to install Ansible. This includes installing Python 2.7        *"
-echo "* in case of Ubuntu 18.04                                        *"
+echo "* in case of Ubuntu 18.04                                              *"
 echo "*                                                                      *"  
 echo "* Remember to unsinstall Python 2.7 when you finish with Ansible + CIS *"
 echo "************************************************************************"
-read -p "Press ENTER when ready"
+
+##########################
+### CONTROL BREAKPOINT ###
+##########################
+###read -p "Press ENTER when ready"
 
 function alter_ansible_install(){
 	echo "[w] - It seems there is a problem installing Ansible in Cubic, we will start the alternative installation process..."
@@ -295,7 +314,11 @@ echo "- src: https://github.com/florianutz/Ubuntu1804-CIS.git" > /opt/Ubuntu1804
 sed -i 's/collections://g' /opt/Ubuntu1804-CIS/meta/main.yml
 sed -i 's/  - ansible.posix//g' /opt/Ubuntu1804-CIS/meta/main.yml
 
-read -p "[r] - About to start ansible-galaxy - Press ENTER"
+##########################
+### CONTROL BREAKPOINT ###
+##########################
+###read -p "[r] - About to start ansible-galaxy - Press ENTER"
+
 ansible-galaxy install -p roles -r requirements.yml
 
 sed -i 's/collections://g' /opt/Ubuntu1804-CIS/roles/Ubuntu1804-CIS/meta/main.yml
@@ -355,8 +378,12 @@ sudo apt install -y auditd
 sleep 2
 clear
 
+##########################
+### CONTROL BREAKPOINT ###
+##########################
+###read -p "[r] - Press ENTER when ready to play the book with Ansible"
+
 # Skipping some rules and actions 
-read -p "[r] - Press ENTER when ready to play the book with Ansible"
 ansible-playbook /opt/Ubuntu1804-CIS/my_console.yml --skip-tags "aide, grub_config, rule_2.2.1.1, rule_2.2.3"
 
 function ansible_remove(){
@@ -413,7 +440,7 @@ function restart_wazuh_agent(){
 
 ## Ansible removal is disabled by default for the tests.
 ## Uncomment when ready to build your hardened template.
-#ansible_remove
+ansible_remove
 
 function removing_misc(){
 
@@ -443,12 +470,12 @@ function removing_misc(){
 #		done
 		
 	rm -rf ~/.cache/thumbnails/*
-	rm /tmp/replace.py
+	#rm /tmp/replace.py
 	history -c
 }
 
 ## Misc software uninstall is disabled by default. 
 ## Uncomment to activate it when ready to build your hardened template.
-#removing_misc
+removing_misc
 
 exit 0
