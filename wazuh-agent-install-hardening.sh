@@ -239,7 +239,7 @@ echo "* in case of Ubuntu 18.04                                              *"
 echo "*                                                                      *"  
 echo "* Remember to unsinstall Python 2.7 when you finish with Ansible + CIS *"
 echo "************************************************************************"
-
+	
 ##########################
 ### CONTROL BREAKPOINT ###
 ##########################
@@ -424,7 +424,8 @@ function ansible_remove(){
 		
 	elif [[ $ANSVARINSTALL == "dpkg" ]]
 	then
-		sudo dpkg -r /tmp/ansible-alternative/*.deb
+		#sudo dpkg -r /tmp/ansible-alternative/*.deb
+		sudo apt remove -y ansible
 	fi
 }
 
@@ -469,7 +470,7 @@ function removing_misc(){
 #			snap remove "$snapname" --revision="$revision"
 #		done
 		
-	rm -rf ~/.cache/thumbnails/*
+	#rm -rf ~/.cache/thumbnails/*
 	#rm /tmp/replace.py
 	history -c
 }
