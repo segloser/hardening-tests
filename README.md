@@ -1,7 +1,7 @@
 # hardening-tests
 Just some files to play with during hardening tests
 
-This file *wazuh-agent-install-hardening.sh* will make the proper arrangements to install Ansible in a Cubic project and automate some hardening.
+This file <a href="https://github.com/segloser/hardening-tests/blob/main/wazuh-agent-install-hardening.sh">**wazuh-agent-install-hardening.sh**</a> will make the proper arrangements to install Ansible in a Cubic project and automate some hardening.
 It will also install the Wazuh Agent, so you will need to have a Wazuh Manager listening to it in the same network.
 The script uses the proper SCA Template for providing statistics and details about CIS Benchmarks compliance, in the SCA section in the Wazuh Dashboard.
 The two only versions tested are: Ubuntu 18.04 and 20.04.
