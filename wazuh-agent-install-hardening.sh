@@ -246,7 +246,7 @@ echo "************************************************************************"
 ###read -p "Press ENTER when ready"
 
 function alter_ansible_install(){
-	echo "[w] - It seems there is a problem installing Ansible in Cubic, we will start the alternative installation process..."
+	echo "[w] - It seems there is a problem installing Ansible in Cubic (have you updated apt sources?), we will start the alternative installation process..."
 	rm -rf /tmp/ansible-alternative 
 	mkdir /tmp/ansible-alternative
 	cd /tmp/ansible-alternative
