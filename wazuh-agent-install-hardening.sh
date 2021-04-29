@@ -439,6 +439,9 @@ function restart_wazuh_agent(){
 	fi
 }
 
+# Enabling Wazuh Agent Service at every startup
+systemctl enable wazuh-agent.service
+
 ## Ansible removal is disabled by default for the tests.
 ## Uncomment when ready to build your hardened template.
 ansible_remove
