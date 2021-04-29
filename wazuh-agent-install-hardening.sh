@@ -11,9 +11,9 @@
 ## [w] - Warning!
 
 LOG="/tmp/wazuh-install.log"
-echo -n "\n============================="
-echo -n "$(date)" >> $LOG
-echo -n "=============================" >> $LOG
+echo -e "\n=============================" >> $LOG
+echo -e "$(date)" >> $LOG
+echo -e "=============================" >> $LOG
 
 VERSIONCHECK=$(cat /etc/os-release  | grep VERSION_ID | grep -Eo "[0-9]{2}.[0-9]{2}")
 function check_ubuntu_version(){
