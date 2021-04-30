@@ -84,6 +84,12 @@ function check_internet(){
 	fi
 }
 
+# Adding Universe Multiverse
+echo "Adding Universe and Multivers to APT Sources List in Cubic"
+sed -i 's/deb http:\/\/archive.ubuntu.com\/ubuntu\/ bionic main restricted/deb http:\/\/archive.ubuntu.com\/ubuntu\/ bionic main restricted universe multiverse/g' /etc/apt/sources.list
+sed -i 's/deb http:\/\/security.ubuntu.com\/ubuntu\/ bionic-security main restricted/deb http:\/\/security.ubuntu.com\/ubuntu\/ bionic-security main restricted universe multiverse/g' /etc/apt/sources.list
+sec -i 's/deb http:\/\/archive.ubuntu.com\/ubuntu\/ bionic-updates main restricted/deb http:\/\/archive.ubuntu.com\/ubuntu\/ bionic-updates main restricted universe multiverse/g' /etc/apt/sources.list
+
 check_internet
 sudo apt update -y
 
