@@ -225,7 +225,7 @@ function cis_download(){
 if [[ $(grep -Eo "CISDOWNLOADED" $LOG) == "" ]]
 then 
 	cis_download
-	rm /var/ossec/ruleset/sca/debian*.yml
+	rm /var/ossec/ruleset/sca/*debian*.yml
 else
 	echo "CIS SCA for Ubuntu $VERSION.04 already downloaded"
 fi
